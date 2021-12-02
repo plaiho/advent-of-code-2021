@@ -9,23 +9,12 @@ function parse_command(x)
     return command
     end
 
-function calculate_depth(m)
-    (depth, aim) = (0, 0)
-    for i in zip(m[:,1], m[:,2])
-        i[1] == 0 ? (depth, aim) = (depth, aim+i[2]) :
-        i[1] != 0 ? (depth, aim) = (depth+i[1]*aim, aim) :
-        (depth, aim) = (depth, aim)
-    end
-    return depth
-    end
-
 println(string("Reading data from file ", ARGS[1]))
 readings = readdlm(ARGS[1], '\t')
-commands = [parse_command(reading) for reading in readings]
-m = transpose(reduce(hcat, commands))
 
-position = sum(m[:,1])
-depth = calculate_depth(m)
+commands = transpose(reduce(hcat, [parse_command(reading) for reading in readings]))
+position = sum(commands[:,1])
+depth = sum(commands[:,1] .* cumsum(commands[:,2]))
 
 println(string(position))
 println(string(depth))
